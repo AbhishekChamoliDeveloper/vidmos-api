@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 
 const authRoutes = require("./routers/authRoutes");
+const userRoutes = require("./routers/userRoutes");
 const globalErrorHandler = require("./middlewares/globalErrorHandler");
 
 require("dotenv").config();
@@ -20,6 +21,7 @@ mongoose
   });
 
 app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
 
 app.use(globalErrorHandler);
 
