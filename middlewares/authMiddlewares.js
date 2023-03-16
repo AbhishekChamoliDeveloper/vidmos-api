@@ -15,7 +15,9 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-  const user = await User.findOne({ _id: decoded.userId });
+  const user = await User.findOne({ _id: decoded.userId }).select(
+    "_id firstName lastName username"
+  );
 
   if (!user) {
     return next(new AppError("User not found", 401));

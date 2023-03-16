@@ -111,3 +111,32 @@ exports.verifyAccount = catchAsync(async (req, res, next) => {
     token: token,
   });
 });
+
+exports.login = catchAsync(async (req, res, next) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return next(new AppError("Please provide email and password", 400));
+  }
+
+  if (!validator.default.isEmail(email)) {
+    return next(new AppError("Please provide a valid email", 400));
+  }
+
+  const user = await User.findOne({ email });
+
+  if (user.isVerified === false) {
+    return next(new AppError("Please verify your account first.", 400));
+  }
+
+  if (!user || !(await bcrypt.compare(password, user.password))) {
+    return next(new AppError("Incorrect email or password", 400));
+  }
+
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+
+  res.status(200).json({
+    message: "You are logged in successfully",
+    token,
+  });
+});

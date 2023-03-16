@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     unquie: true,
   },
+  profile: {
+    type: String,
+    default: null,
+  },
   otp: {
     type: String,
     default: null,
