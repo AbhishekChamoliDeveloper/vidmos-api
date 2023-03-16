@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const authRoutes = require("./routers/authRoutes");
 const userRoutes = require("./routers/userRoutes");
 const globalErrorHandler = require("./middlewares/globalErrorHandler");
+const deleteUnverifiedUserAgenda = require("./servcies/deleteUnverifiedUserAgenda");
 
 require("dotenv").config();
 
@@ -19,6 +20,15 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
+
+(async () => {
+  try {
+    await deleteUnverifiedUserAgenda();
+    console.log("Agenda has started");
+  } catch (err) {
+    console.log(err);
+  }
+})();
 
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
