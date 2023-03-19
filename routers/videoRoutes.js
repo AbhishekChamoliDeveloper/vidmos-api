@@ -14,4 +14,10 @@ router
     videoController.uploadVideo
   );
 
+router
+  .route("/:id")
+  .get(authMiddlewares.protect, videoController.getVideo)
+  .patch(authMiddlewares.protect, videoController.updateVideoInfo)
+  .delete(authMiddlewares.protect, videoController.deleteVideo);
+
 module.exports = router;
