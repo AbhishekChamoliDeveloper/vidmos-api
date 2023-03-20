@@ -8,7 +8,7 @@ const router = express.Router();
 
 router
   .route("/update-info")
-  .post(authMiddlewares.protect, userControllers.updateBasicInformation);
+  .patch(authMiddlewares.protect, userControllers.updateBasicInformation);
 
 router
   .route("/forgot-password-otp")
@@ -22,7 +22,7 @@ router
 
 router
   .route("/update-profile")
-  .post(
+  .patch(
     authMiddlewares.protect,
     profileUploader.single("profile"),
     userControllers.updateProfile

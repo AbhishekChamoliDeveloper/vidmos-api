@@ -77,32 +77,6 @@ exports.uploadVideo = catchAsync(async (req, res, next) => {
   streamifier.createReadStream(videoToUpload.buffer).pipe(cloudinaryStream);
 });
 
-exports.deleteVideo = catchAsync(async (req, res, next) => {
-  const { _id } = req.user;
-  const videoId = req.params.id;
-
-  const video = await Video.findById(videoId);
-
-  if (!video) {
-    return next(new AppError("Video not found with this id"));
-  }
-
-  const user = await User.findOne({ _id });
-
-  if (!user) {
-    return next(new AppError("Invalid Account login or signup first"));
-  }
-
-  if (!user.uploadedVideos.includes(videoId)) {
-    return next(new AppError("Only owner can delete this video."));
-  }
-
-  await Video.deleteOne({ _id: videoId });
-  await User.updateOne({ _id }, { $pull: { uploadedVideos: videoId } });
-
-  res.status(204).json({});
-});
-
 exports.getVideo = catchAsync(async (req, res, next) => {
   const videoId = req.params.id;
 
@@ -111,14 +85,44 @@ exports.getVideo = catchAsync(async (req, res, next) => {
     "_id firstName lastName email username"
   );
 
+  if (!video) {
+    return next(new AppError("Video not found with this Id."));
+  }
+
   video.views++;
   await video.save();
 
+  res.status(200).json(video);
+});
+
+exports.deleteVideo = catchAsync(async (req, res, next) => {
+  const { _id } = req.user;
+  const videoId = req.params.id;
+
+  const video = await Video.findById(videoId);
+
   if (!video) {
-    return next(new AppError("Video not found with this id"));
+    return next(new AppError("Video not found with this Id"));
   }
 
-  res.status(200).json(video);
+  const user = await User.findOne({ _id });
+
+  if (!user) {
+    return next(new AppError("Invalid Account login or Singup first"));
+  }
+
+  if (!user.uploadedVideos.includes(videoId)) {
+    return next(
+      new AppError(
+        "Warning! Only Owner can delete this video. You should have to be in this route."
+      )
+    );
+  }
+
+  await Video.deleteOne({ _id: videoId });
+  await User.updateOne({ _id }, { $pull: { uploadedVideos: videoId } });
+
+  res.status(204).json({});
 });
 
 exports.updateVideoInfo = catchAsync(async (req, res, next) => {
@@ -129,17 +133,21 @@ exports.updateVideoInfo = catchAsync(async (req, res, next) => {
   const video = await Video.findById(videoId);
 
   if (!video) {
-    return next(new AppError("Video not found", 404));
+    return next(new AppError("Video not found with this Id"));
   }
 
   const user = await User.findOne({ _id });
 
   if (!user) {
-    return next(new AppError("Invalid Account login or signup first"));
+    return next(new AppError("Invalid Account login or Singup first"));
   }
 
   if (!user.uploadedVideos.includes(videoId)) {
-    return next(new AppError("Only owner can update video information."));
+    return next(
+      new AppError(
+        "Warning! Only Owner can delete this video. You should have to be in this route."
+      )
+    );
   }
 
   video.title = title;
@@ -151,6 +159,6 @@ exports.updateVideoInfo = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: "success",
-    message: "Video information has been updated",
+    messsage: "Video information has been updated",
   });
 });

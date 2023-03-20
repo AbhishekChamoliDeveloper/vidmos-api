@@ -8,7 +8,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer")) {
-    return next(AppError("Unauthorized! Login or Signup first.", 400));
+    return next(new AppError("Unauthorized! Login or Signup first.", 400));
   }
 
   const token = authHeader.split(" ")[1];
