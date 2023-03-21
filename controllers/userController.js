@@ -194,3 +194,29 @@ exports.updateProfile = catchAsync(async (req, res, next) => {
 
   streamifier.createReadStream(profileToUpload.buffer).pipe(cloudinaryStream);
 });
+
+exports.getProfileById = catchAsync(async (req, res, next) => {
+  const userToFind = req.params.id;
+
+  const user = await User.findById(userToFind)
+    .select("_id firstName lastName username uploadedVideos")
+    .populate(
+      "uploadedVideos",
+      "_id title description keywords category uploadedBy createdAt fileUrl likes dislike views"
+    );
+
+  res.status(200).json(user);
+});
+
+exports.getProfileByUsername = catchAsync(async (req, res, next) => {
+  const username = req.params.username;
+
+  const user = await User.findOne({ username })
+    .select("_id firstName lastName username uploadedVideos")
+    .populate(
+      "uploadedVideos",
+      "_id title description keywords category uploadedBy createdAt fileUrl likes dislike views"
+    );
+
+  res.status(200).json(user);
+});

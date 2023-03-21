@@ -28,4 +28,12 @@ router
     userControllers.updateProfile
   );
 
+router
+  .route("/get-profile-by-id/:id")
+  .get(authMiddlewares.protect, userControllers.getProfileById);
+
+router
+  .route("/get-profile-by-username/:username")
+  .get(authMiddlewares.protect, userControllers.getProfileByUsername);
+
 module.exports = router;
