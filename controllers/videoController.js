@@ -162,3 +162,145 @@ exports.updateVideoInfo = catchAsync(async (req, res, next) => {
     messsage: "Video information has been updated",
   });
 });
+
+exports.likeVideo = catchAsync(async (req, res, next) => {
+  const { _id } = req.user;
+  const videoId = req.params.id;
+
+  const video = await Video.findById(videoId);
+
+  if (!video) {
+    return next(new AppError("Video not found with this Id"));
+  }
+
+  const user = await User.findOne({ _id });
+
+  if (!user) {
+    return next(new AppError("Invalid Account login or Singup first"));
+  }
+
+  if (video.usersLikedThisVideo.includes(_id)) {
+    video.likes--;
+
+    let userIdIndex = video.usersLikedThisVideo.indexOf(_id);
+    let videoIdIndex = user.likedVideos.indexOf(videoId);
+
+    video.usersLikedThisVideo.splice(userIdIndex, 1);
+    user.likedVideos.splice(videoIdIndex, 1);
+
+    await user.save();
+    await video.save();
+
+    const updatedVideo = await Video.findById(videoId).select(
+      "-usersDislikedThisVideo -usersLikedThisVideo -__v"
+    );
+
+    res.status(202).json(updatedVideo);
+  } else if (video.usersDislikedThisVideo.includes(_id)) {
+    video.likes++;
+    video.dislike--;
+
+    let userIdIndex = video.usersDislikedThisVideo.indexOf(_id);
+    let videoIdIndex = user.dislikedVideos.indexOf(videoId);
+
+    video.usersDislikedThisVideo.splice(userIdIndex, 1);
+    video.usersLikedThisVideo.push(_id);
+
+    user.dislikedVideos.splice(videoIdIndex, 1);
+    user.likedVideos.push(videoId);
+
+    await user.save();
+    await video.save();
+
+    const updatedVideo = await Video.findById(videoId).select(
+      "-usersDislikedThisVideo -usersLikedThisVideo -__v"
+    );
+
+    res.status(202).json(updatedVideo);
+  } else {
+    video.likes++;
+
+    video.usersLikedThisVideo.push(_id);
+    user.likedVideos.push(videoId);
+
+    await user.save();
+    await video.save();
+
+    const updatedVideo = await Video.findById(videoId).select(
+      "-usersDislikedThisVideo -usersLikedThisVideo -__v"
+    );
+
+    res.status(202).json(updatedVideo);
+  }
+});
+
+exports.dislikeVideo = catchAsync(async (req, res, next) => {
+  const { _id } = req.user;
+  const videoId = req.params.id;
+
+  const video = await Video.findById(videoId);
+
+  if (!video) {
+    return next(new AppError("Video not found with this Id"));
+  }
+
+  const user = await User.findOne({ _id });
+
+  if (!user) {
+    return next(new AppError("Invalid Account login or Singup first"));
+  }
+
+  if (video.usersDislikedThisVideo.includes(_id)) {
+    video.dislike--;
+
+    let userIdIndex = video.usersDislikedThisVideo.indexOf(_id);
+    let videoIdIndex = user.dislikedVideos.indexOf(videoId);
+
+    video.usersDislikedThisVideo.splice(userIdIndex, 1);
+    user.dislikedVideos.splice(videoIdIndex, 1);
+
+    await user.save();
+    await video.save();
+
+    const updatedVideo = await Video.findById(videoId).select(
+      "-usersDislikedThisVideo -usersLikedThisVideo -__v"
+    );
+
+    res.status(202).json(updatedVideo);
+  } else if (video.usersLikedThisVideo.includes(_id)) {
+    video.likes--;
+    video.dislike++;
+
+    let userIdIndex = video.usersLikedThisVideo.indexOf(_id);
+    let videoIdIndex = user.likedVideos.indexOf(videoId);
+
+    video.usersLikedThisVideo.splice(userIdIndex, 1);
+    video.usersDislikedThisVideo.push(_id);
+
+    user.likedVideos.splice(videoIdIndex, 1);
+    user.dislikedVideos.push(videoId);
+
+    await user.save();
+    await video.save();
+
+    const updatedVideo = await Video.findById(videoId).select(
+      "-usersDislikedThisVideo -usersLikedThisVideo -__v"
+    );
+
+    res.status(202).json(updatedVideo);
+  } else {
+    video.dislike++;
+
+    video.usersDislikedThisVideo.push(_id);
+    user.dislikedVideos.push(videoId);
+
+    await user.save();
+    await video.save();
+
+    const updatedVideo = await Video.findById(videoId).select(
+      "-usersDislikedThisVideo -usersLikedThisVideo -__v"
+    );
+
+    res.status(202).json(updatedVideo);
+  }
+});

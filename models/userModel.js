@@ -49,6 +49,8 @@ const userSchema = new mongoose.Schema({
     default: false,
   },
   uploadedVideos: [{ type: mongoose.Schema.Types.ObjectId, ref: "Video" }],
+  likedVideos: [{ type: mongoose.Schema.Types.ObjectId, ref: "Video" }],
+  dislikedVideos: [{ type: mongoose.Schema.Types.ObjectId, ref: "Video" }],
   createdAt: {
     type: Date,
     default: Date.now,

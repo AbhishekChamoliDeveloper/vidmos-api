@@ -20,4 +20,12 @@ router
   .patch(authMiddlewares.protect, videoController.updateVideoInfo)
   .delete(authMiddlewares.protect, videoController.deleteVideo);
 
+router
+  .route("/like/:id")
+  .patch(authMiddlewares.protect, videoController.likeVideo);
+
+router
+  .route("/dislike/:id")
+  .patch(authMiddlewares.protect, videoController.dislikeVideo);
+
 module.exports = router;

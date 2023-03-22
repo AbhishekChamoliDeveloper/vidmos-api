@@ -58,6 +58,10 @@ const videoSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  usersLikedThisVideo: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  usersDislikedThisVideo: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  ],
 });
 
 const Video = mongoose.model("Video", videoSchema);
