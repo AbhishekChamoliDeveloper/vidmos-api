@@ -28,4 +28,8 @@ router
   .route("/dislike/:id")
   .patch(authMiddlewares.protect, videoController.dislikeVideo);
 
+router
+  .route("/:id/comment")
+  .post(authMiddlewares.protect, videoController.createComment);
+
 module.exports = router;

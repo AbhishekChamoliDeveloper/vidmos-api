@@ -55,6 +55,8 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  commented: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
+  commentReplied: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
 });
 
 const User = mongoose.model("User", userSchema);
