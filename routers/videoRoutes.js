@@ -32,4 +32,12 @@ router
   .route("/:id/comment")
   .post(authMiddlewares.protect, videoController.createComment);
 
+router
+  .route("/:videoId/comment/:commentId/reply")
+  .post(authMiddlewares.protect, videoController.createReply);
+
+router
+  .route("/:videoId/comment/:commentId/reply/:replyId/reply")
+  .post(authMiddlewares.protect, videoController.createChildReply);
+
 module.exports = router;
