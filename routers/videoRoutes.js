@@ -40,4 +40,8 @@ router
   .route("/:videoId/comment/:commentId/reply/:replyId/reply")
   .post(authMiddlewares.protect, videoController.createChildReply);
 
+router
+  .route("/:videoId/comment/:commentId")
+  .delete(authMiddlewares.protect, videoController.deleteComment);
+
 module.exports = router;
