@@ -46,4 +46,8 @@ router
   .patch(authMiddlewares.protect, videoController.updateComment)
   .delete(authMiddlewares.protect, videoController.deleteComment);
 
+router
+  .route("/:videoId/comment/:commentId/reply/:replyId")
+  .delete(authMiddlewares.protect, videoController.deleteReply);
+
 module.exports = router;
