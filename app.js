@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const authRoutes = require("./routers/authRoutes");
 const userRoutes = require("./routers/userRoutes");
 const videoRoutes = require("./routers/videoRoutes");
+const notificationRoutes = require("./routers/notificationRoutes");
 const globalErrorHandler = require("./middlewares/globalErrorHandler");
 const deleteUnverifiedUserAgenda = require("./servcies/deleteUnverifiedUserAgenda");
 
@@ -34,6 +35,7 @@ mongoose
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/videos", videoRoutes);
+app.use("/notification", notificationRoutes);
 
 app.use(globalErrorHandler);
 

@@ -9,6 +9,7 @@ const AppError = require("../utility/appError");
 const User = require("../models/userModel");
 const Comment = require("../models/commentModel");
 const Reply = require("../models/replyModel");
+const Notification = require("../models/notificationModel");
 
 // Cloudinary Config
 cloudinary.config({
@@ -336,6 +337,23 @@ exports.createComment = catchAsync(async (req, res, next) => {
 
   await video.save();
   await user.save();
+
+  // Creating Notification for Video Owner
+  const recipientId = video.uploadedBy;
+
+  const notificationBody = {
+    recipientId,
+    title: `${user.username} is commented.`,
+    description: newComment.text,
+  };
+
+  const newNotification = await Notification.create(notificationBody);
+
+  const videoOwner = await User.findById(recipientId);
+
+  videoOwner.notifications.push(newNotification._id);
+
+  await videoOwner.save();
 
   res.status(201).json({
     status: "success",
