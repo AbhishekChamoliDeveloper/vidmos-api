@@ -83,6 +83,7 @@ exports.uploadVideo = catchAsync(async (req, res, next) => {
 
 exports.getVideo = catchAsync(async (req, res, next) => {
   const videoId = req.params.id;
+  const { _id } = req.user;
 
   const video = await Video.findById(videoId).populate(
     "uploadedBy",
@@ -93,8 +94,12 @@ exports.getVideo = catchAsync(async (req, res, next) => {
     return next(new AppError("Video not found with this Id."));
   }
 
-  video.views++;
+  const user = await User.findById(_id);
+
+  user.history.push(videoId);
+
   await video.save();
+  await user.save();
 
   res.status(200).json(video);
 });

@@ -36,4 +36,8 @@ router
   .route("/get-profile-by-username/:username")
   .get(authMiddlewares.protect, userControllers.getProfileByUsername);
 
+router
+  .route("/delete-history")
+  .delete(authMiddlewares.protect, userControllers.deleteHistory);
+
 module.exports = router;

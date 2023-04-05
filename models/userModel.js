@@ -61,6 +61,7 @@ const userSchema = new mongoose.Schema({
   notifications: [
     { type: mongoose.Schema.Types.ObjectId, ref: "Notification" },
   ],
+  history: [{ type: mongoose.Schema.Types.ObjectId, ref: "Video" }],
 });
 
 const User = mongoose.model("User", userSchema);

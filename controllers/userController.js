@@ -220,3 +220,11 @@ exports.getProfileByUsername = catchAsync(async (req, res, next) => {
 
   res.status(200).json(user);
 });
+
+exports.deleteHistory = catchAsync(async (req, res, next) => {
+  const { _id } = req.user;
+
+  await User.updateOne({ _id: _id }, { $set: { history: [] } }, { new: true });
+
+  res.status(202).json();
+});
